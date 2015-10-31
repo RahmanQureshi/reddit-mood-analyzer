@@ -1,0 +1,48 @@
+<!doctype html>
+<!--
+ This page is shown when the extension button is clicked, because the
+ "browser_action" field in manifest.json contains the "default_popup" key with
+ value "popup.html".
+ -->
+<html>
+  <head>
+    <title>Getting Started Extension's Popup</title>
+    <style>
+      body {
+        font-family: "Segoe UI", "Lucida Grande", Tahoma, sans-serif;
+        font-size: 100%;
+        background-color: #cee3f8;
+      }
+      #banner-logo {
+        width: 35px;
+        height: 35px;
+        float: left;
+      }
+      #title {
+        font-size: 18px;
+        line-height: 35px;
+        margin-left: 10px;
+      }
+      #banner {
+        min-width:400px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="banner">
+      <img id="banner-logo" src="img/reddit-face.png"/>
+      <span id="title">Reddit Mood Analyzer</span>
+    </div>
+    <div id="main">
+      <div class="data-group">
+        <div class="score-box">
+          The thread score is:
+        </div>
+        <div class="visual-box">
+          Graph here!
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+
