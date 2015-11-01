@@ -96,3 +96,36 @@ chrome.tabs.query({'active': true, 'lastFocusedWindow': true}, function (tabs) {
         $('#error').show();
     }
 });
+
+var WIDTH=300;
+var HEIGHT=300;
+
+function wordCloud(data){
+    d3.layout.cloud().size([WIDTH,HEIGHT])
+      .words(data.map(function(d){return {text: d[0], size: d[1]}}))
+      .rotate(function(){return ~~(Math.random()*2)* 90})
+      .font("Impact")
+      .fontSize(function(d){return d.size})
+      .on("end",draw)
+      .start();
+}
+
+function draw(words) {
+    var color = d3.scale.category20();
+    d3.select("body").append("svg")
+      .attr("width", WIDTH)
+      .attr("height", HEIGHT)
+      .append("g")
+      .attr("transform", "translate("+(WIDTH/2)+","+(HEIGHT/2)+")")
+      .selectAll("text")
+      .data(words)
+      .enter().append("text")
+      .style("font-size", function(d){return d.size + "px"})
+      .style("font-family", "Impact")
+      .style("fill", function(d, i){return color(i)})
+      .attr("text-anchor", "middle")
+      .attr("transform", function(d){
+        return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")"
+    })
+      .text(function(d) { return d.text; });
+}
