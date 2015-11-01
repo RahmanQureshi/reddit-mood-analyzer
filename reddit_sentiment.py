@@ -75,7 +75,7 @@ def r(subreddit, thread):
     # if db has stored values, return stored values
     stored_sentiments = searchThreadId(thread)
     if stored_sentiments != []:
-        return Response(jsons.dumps(stored_sentiments), mimetype="application/json")
+        return Response(json.dumps(stored_sentiments), mimetype="application/json")
 
     # establish client
     client = HODClient(
