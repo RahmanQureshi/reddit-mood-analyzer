@@ -14,6 +14,11 @@ app = Flask(__name__)
 
 collection = MongoDBClient().get_db().redditComments
 
+try:
+    collection.ensure_index([('comment', 'text')])
+except:
+    pass
+
 def getAdjectives(body):
     poss = nltk.pos_tag(nltk.word_tokenize(body))
     adjectives = []    
@@ -27,7 +32,6 @@ def wordListToFrequencyTuple(word_list):
     return [[key, value] for key, value in frequencyMap.items()]
 
 def searchKeyword(keywords):
-    collection.ensure_index([('comment', 'text')])
     cursor = collection.find({'$text': { '$search': keywords}})
     return [c for c in cursor]
 
@@ -42,6 +46,18 @@ def store(comment, threadId, sentiment):
 def index():
     return render_template("index.html")
 
+@app.route('/wordcloud/<keyword>')
+def wordCloud(keyword):
+    print("HERE")
+    relatedObjects = searchKeyword(keyword)
+    print(relatedObjects)
+    adjectives = []
+    for obj in relatedObjects:
+        try:
+            adjectives.extend(obj['adjectives']) # not all will have adjectives
+        except:
+            pass
+    return Response(json.dumps(wordListToFrequencyTuple(adjectives)), mimetype="application/json")
 
 @app.route("/report.html")
 @app.route("/report/<topic>")
@@ -57,7 +73,7 @@ def r(subreddit, thread):
 
 
     # if db has stored values, return stored values
-    stored_sentiments = searchThreadID(thread)
+    stored_sentiments = searchThreadId(thread)
     if stored_sentiments != []:
         return Response(jsons.dumps(stored_sentiments), mimetype="application/json")
 
