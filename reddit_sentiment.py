@@ -32,9 +32,8 @@ def searchKeyword(keywords):
     return [c for c in cursor]
 
 def searchThreadId(threadId):
-    collection = MongoDBClient().get_db().redditComments
     cursor = collection.find({'threadId':threadId})
-    return [c for c in cursor]
+    return [c["sentiment"] for c in cursor]
     
 def store(comment, threadId, sentiment):
     collection.insert({"comment":comment, "threadId":threadId, "sentiment":sentiment, "adjectives":getAdjectives(comment)})
