@@ -242,7 +242,9 @@
           .text(function(d) { return d.text; });
     }
     getWords("Microsoft");
-    $.get('http://159.203.133.16/sentiment/microsoft', function(data){
+    $.get('http://159.203.133.16/sentiment/microsoft', function(data) {
+	var average = 0;
+	var count=[0,0,0];
         for(var i=0;i<data.length;i++){
             average+=data[i];
             if(data[i]>0&&data[i]<1){
