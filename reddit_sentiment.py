@@ -37,7 +37,7 @@ def searchThreadId(threadId):
     return [c for c in cursor]
     
 def store(comment, threadId, sentiment):
-    collection.insert({"comment":comment, "threadId":threadId, "sentiment":sentiment, "adjectives":getAdjectives(body)})
+    collection.insert({"comment":comment, "threadId":threadId, "sentiment":sentiment, "adjectives":getAdjectives(comment)})
 
 @app.route("/")
 def index():
