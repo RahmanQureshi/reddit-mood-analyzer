@@ -67,6 +67,7 @@ def r(subreddit, thread):
     flat_comments = praw.helpers.flatten_tree(submission.comments)
 
     results = []
+    insertion_objects = []
 
     for comment in flat_comments:
         if isinstance(comment, praw.objects.MoreComments):
@@ -76,8 +77,9 @@ def r(subreddit, thread):
             r = client.post('analyzesentiment', {'text': body})
             output = r.json()
             sentiment = output["aggregate"]["score"]
-            store(body, thread, sentiment)
+            insertion_objects.append({"comment":body, "threadId":thread, "sentiment":sentiment, "adjectives":getAdjectives(comment)})
             results.append(sentiment)
+    collection.insert_many(insertion_objects)
 
     # store json formatted text in output
     return Response(json.dumps(results), mimetype="application/json")
