@@ -29,7 +29,7 @@ def r(subreddit, thread):
     user_agent = "reddit-mood-analyzer-scrape by /u/abrarisland"
     reddit = praw.Reddit(user_agent=user_agent)
 
-    submission = reddit.get_submission(submission_id=thread, comment_limit=15)
+    submission = reddit.get_submission(submission_id=thread, comment_limit =15)
 
     # get all of the comments in the thread and flatten the comment tree
     flat_comments = praw.helpers.flatten_tree(submission.comments)
@@ -37,6 +37,8 @@ def r(subreddit, thread):
     results = []
 
     for comment in flat_comments:
+        if isinstance(comment, praw.objects.MoreComments):
+            continue
         body = comment.body
         if body != "[deleted]":
             r = client.post('analyzesentiment', {'text': body})
