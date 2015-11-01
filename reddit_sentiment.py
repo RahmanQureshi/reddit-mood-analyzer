@@ -29,10 +29,9 @@ def r(subreddit, thread):
     user_agent = "reddit-mood-analyzer-scrape by /u/abrarisland"
     reddit = praw.Reddit(user_agent=user_agent)
 
-    submission = reddit.get_submission(submission_id=thread)
+    submission = reddit.get_submission(submission_id=thread, comment_limit=15)
 
     # get all of the comments in the thread and flatten the comment tree
-    submission.replace_more_comments(limit=None, threshold=0)
     flat_comments = praw.helpers.flatten_tree(submission.comments)
 
     results = []
