@@ -53,15 +53,24 @@ def searchThreadId(threadId):
 def store(comment, threadId, sentiment):
     collection.insert({"comment":comment, "threadId":threadId, "sentiment":sentiment, "adjectives":getAdjectives(comment)})
 
+@app.route('/sentiment/<keyword>')
+def getSentimentTowardsWord(keyword):
+    relatedObjects = searchKeyword(keyword)
+    sentiments = []
+    for obj in relatedObjects:
+        try:
+            sentiments.append(obj['sentiment'])
+        except:
+            pass
+    return Response(json.dumps(sentiments), mimetype="application/json")
+
 @app.route("/")
 def index():
     return render_template("index.html")
 
 @app.route('/wordcloud/<keyword>')
 def wordCloud(keyword):
-    print("HERE")
     relatedObjects = searchKeyword(keyword)
-    print(relatedObjects)
     adjectives = []
     for obj in relatedObjects:
         try:
