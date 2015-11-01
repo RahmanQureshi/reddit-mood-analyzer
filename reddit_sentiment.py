@@ -2,6 +2,7 @@ from flask import Flask
 from flask import jsonify, render_template, Response
 from havenondemand.hodindex import HODClient
 from flask import request
+from pymongo import MongoClient
 import praw
 import json
 from domain_fix import crossdomain
@@ -13,10 +14,12 @@ app = Flask(__name__)
 def index():
     return render_template("index.html")
 
+
 @app.route("/report.html")
 def report():
     topic = request.args.get('topic')
     return topic
+
 
 @app.route("/<subreddit>/<thread>")
 @crossdomain(origin="*")
@@ -29,7 +32,7 @@ def r(subreddit, thread):
     user_agent = "reddit-mood-analyzer-scrape by /u/abrarisland"
     reddit = praw.Reddit(user_agent=user_agent)
 
-    submission = reddit.get_submission(submission_id=thread, comment_limit =15)
+    submission = reddit.get_submission(submission_id=thread, comment_limit=15)
 
     # get all of the comments in the thread and flatten the comment tree
     flat_comments = praw.helpers.flatten_tree(submission.comments)
