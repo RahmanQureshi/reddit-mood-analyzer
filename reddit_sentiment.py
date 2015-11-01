@@ -4,6 +4,7 @@ from havenondemand.hodindex import HODClient
 from flask import request
 import praw
 import json
+from domain_fix import crossdomain
 
 app = Flask(__name__)
 
