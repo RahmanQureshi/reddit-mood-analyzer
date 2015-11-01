@@ -37,6 +37,8 @@ def r(subreddit, thread):
     results = []
 
     for comment in flat_comments:
+        if isinstance(comment, praw.objects.MoreComments):
+            continue
         body = comment.body
         if body != "[deleted]":
             r = client.post('analyzesentiment', {'text': body})
