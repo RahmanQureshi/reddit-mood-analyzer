@@ -31,9 +31,20 @@ def wordListToFrequencyTuple(word_list):
     frequencyMap = nltk.FreqDist(word_list)
     return [[key, value] for key, value in frequencyMap.items()]
 
+# http://stackoverflow.com/questions/30232081/mongoexception-index-with-name-code-already-exists-with-different-options
 def searchKeyword(keywords):
-    cursor = collection.find({'$text': { '$search': keywords}})
-    return [c for c in cursor]
+    keywords = keywords.lower()
+    cursor = collection.find()
+    relevant = []
+    for c in cursor:
+        try:
+            if c['comment'].lower().find(keywords) != -1:
+                relevant.append(c)
+        except:
+            pass
+    return relevant
+    #cursor = collection.find({'$text': { '$search': keywords}})
+    #return [c for c in cursor]
 
 def searchThreadId(threadId):
     cursor = collection.find({'threadId':threadId})
