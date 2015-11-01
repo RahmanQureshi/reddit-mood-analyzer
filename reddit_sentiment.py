@@ -5,9 +5,38 @@ from flask import request
 import praw
 import json
 from domain_fix import crossdomain
+from Client import MongoDBClient
+import datetime
+import nltk
 
 app = Flask(__name__)
 
+collection = MongoDBClient().get_db().redditComments
+
+def getAdjectives(body):
+    poss = nltk.pos_tag(nltk.word_tokenize(body))
+    adjectives = []    
+    for pos in poss:
+        if pos[1] in ["JJ", "NN", "WP"]:
+            adjectives.append(pos[0])
+    return [adjective.lower() for adjective in adjectives]
+
+def wordListToFrequencyTuple(word_list):
+    frequencyMap = nltk.FreqDist(word_list)
+    return [[key, value] for key, value in frequencyMap.items()]
+
+def searchKeyword(keywords):
+    collection.ensure_index([('comment', 'text')])
+    cursor = collection.find({'$text': { '$search': keywords}})
+    return [c for c in cursor]
+
+def searchThreadId(threadId):
+    collection = MongoDBClient().get_db().redditComments
+    cursor = collection.find({'threadId':threadId})
+    return [c for c in cursor]
+    
+def store(comment, threadId, sentiment):
+    collection.insert({"comment":comment, "threadId":threadId, "sentiment":sentiment, "adjectives":getAdjectives(body)})
 
 @app.route("/")
 def index():
@@ -43,7 +72,9 @@ def r(subreddit, thread):
         if body != "[deleted]":
             r = client.post('analyzesentiment', {'text': body})
             output = r.json()
-            results.append(output["aggregate"]["score"])
+            sentiment = output["aggregate"]["score"]
+            store(body, thread, sentiment)
+            results.append(sentiment)
 
     # store json formatted text in output
     return Response(json.dumps(results), mimetype="application/json")
