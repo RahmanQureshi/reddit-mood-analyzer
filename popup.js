@@ -3,7 +3,7 @@ function request(subreddit,id){
     $('#loading').show();
     var count=[0,0,0];
     var average=0;
-    $.get("/"+subreddit+'/'+id,function(data,status){
+    $.get("http://159.203.133.16/"+subreddit+'/'+id,function(data,status){
         if(status=='success'){
             for(var i=0;i<data.length;i++){
                 average+=data[i];
