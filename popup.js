@@ -77,7 +77,7 @@ function get_domain_name(url)
     return [matches[1], matches[2]]
 }
 
-/*chrome.tabs.query({'active': true, 'lastFocusedWindow': true}, function (tabs) {
+chrome.tabs.query({'active': true, 'lastFocusedWindow': true}, function (tabs) {
     var url = tabs[0].url;
     domain_parts = get_domain_name(url);
     var failed = false;
@@ -96,4 +96,3 @@ function get_domain_name(url)
         $('#error').show();
     }
 });
-*/
