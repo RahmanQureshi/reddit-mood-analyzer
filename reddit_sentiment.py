@@ -79,6 +79,8 @@ def wordCloud(keyword):
             pass
     returned_values = wordListToFrequencyTuple(adjectives)
     returned_values.sort(key=lambda x: x[1])
+    for x in range(len(returned_values)):
+        returned_values[x][1] *= 10
     return Response(json.dumps(returned_values[-1:-11:-1]), mimetype="application/json")
 
 
