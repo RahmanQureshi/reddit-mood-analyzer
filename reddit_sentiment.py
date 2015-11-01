@@ -77,7 +77,10 @@ def wordCloud(keyword):
             adjectives.extend(obj['adjectives']) # not all will have adjectives
         except:
             pass
-    return Response(json.dumps(wordListToFrequencyTuple(adjectives)), mimetype="application/json")
+    returned_values = wordListToFrequencyTuple(adjectives)
+    returned_values.sort(key=lambda x: x[1])
+    return Response(json.dumps(returned_values[-1:-11:-1]), mimetype="application/json")
+
 
 @app.route("/report.html")
 @app.route("/report/<topic>")
