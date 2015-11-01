@@ -45,14 +45,23 @@ def index():
 
 
 @app.route("/report.html")
-def report():
-    topic = request.args.get('topic')
+@app.route("/report/<topic>")
+def report(topic=None):
+    if topic is None:        
+        topic = request.args.get('topic')
     return render_template("report.html", topic=topic)
 
 
 @app.route("/<subreddit>/<thread>")
 @crossdomain(origin="*")
 def r(subreddit, thread):
+
+
+    # if db has stored values, return stored values
+    stored_sentiments = searchThreadID(thread)
+    if stored_sentiments != []:
+        return Response(jsons.dumps(stored_sentiments), mimetype="application/json")
+
     # establish client
     client = HODClient(
         "http://api.havenondemand.com", "65f7315d-1189-449f-a839-7a46fd4263be")
