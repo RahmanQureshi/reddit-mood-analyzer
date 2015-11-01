@@ -47,7 +47,7 @@ def index():
 @app.route("/report.html")
 def report():
     topic = request.args.get('topic')
-    return topic
+    return render_template("report.html", topic=topic)
 
 
 @app.route("/<subreddit>/<thread>")
