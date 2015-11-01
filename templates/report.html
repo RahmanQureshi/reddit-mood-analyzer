@@ -66,12 +66,10 @@
                 <div class="col-lg-5 col-sm-6">
                     <div class="clearfix"></div>
                     <h2 class="section-heading">Monthly Subscriber's Report: Microsoft</h2>
-                    <p class="lead"></p>
+                    <p class="lead">Microsoft gains a lot of support ahead of it's top competitor Apple's botched anouncement of it's new product, the iPen stylus, which leaves much to be desired in terms of comfort, style and smoothness. It's stock is expected to appreciate as people turn to the Surface Pro, away from the IPad.</p>
                 </div>
                 <div id="map" class="col-lg-5 col-lg-offset-1 col-sm-6">
-                    
                 </div>
-    
             </div>
 
         </div>
@@ -82,23 +80,20 @@
                 <div class="col-lg-5 col-lg-offset-1 col-sm-6">
                     <div class="clearfix"></div>
                     <h2 class="section-heading">Trending Topics</h2>
-                    <p class="lead">
-                    </p>
+                    <p class="lead">Outlooks look good as users rave around Microsoft's new product announcements. Trending topics include Microsoft organization, the new Pro 4, the Xbox Two, and Microsoft's new 'Save the Rainforest' iniative.</p>
                 </div>
             </div>
         </div>
-
-        <!-- /.container -->
+         <!-- /.container -->
          <div class="container">
             <div class="row">
                 <div class="col-lg-5 col-lg-offset-1 col-sm-6">
                     <div class="clearfix"></div>
                     <h2 class="section-heading">Sentiment Score</h2>
-                    <p class="lead"></p>
+                    <p class="lead">Overall, the public is very happy with Microsoft, from their product anouncements to final deliverables.</p>
                 </div>
-                <div id="cloud" class="col-lg-5 col-sm-6"></div>
+                <div class="visual-box" class="col-lg-5 col-sm-6"></div>
             </div>
-
         </div>
 
 
@@ -164,6 +159,48 @@
         SSD: colors(Math.random() * 30)
       });
 
+    function pieChart(data){
+        var HEIGHT=200;
+        var WIDTH=200;
+        var radius=Math.min(HEIGHT,WIDTH)/2;
+        var color = ['#00ff00','#FFBF00','#8B0000'];
+        var percentageFormat = d3.format("%");
+        
+        var svg = d3.select('.visual-box')
+        .append('svg')
+        .attr('width', WIDTH)
+        .attr('height', HEIGHT)
+        .append('g')
+        .attr('transform', 'translate('+(WIDTH/2)+','+(HEIGHT/2)+')'); 
+        
+        var arc = d3.svg.arc().outerRadius(radius).innerRadius(0);
+        
+        var pie = d3.layout.pie()
+                    .value(function(d){return d})
+                    .sort(null);
+        
+        var g = svg.selectAll('.arc')
+                   .data(pie(data))
+                   .enter().append("g")
+                   .attr("class", "arc");
+        
+        g.append("path")
+                    .attr("d", arc)
+                    .style("fill", function(d,i) {
+                        return color[i];
+                    });
+        
+        var total = d3.sum(data, function(d){ 
+                    return d;
+        });
+        console.log(total);
+
+        g.append('text').attr("transform",function(d,i){return "translate("+arc.centroid(d,i)+")"})
+                        .attr("text-anchor", "middle")
+                        .text(function(d){return percentageFormat(d.value/total)});
+        
+    }
+
 
     function getWords(word){
         var url="http://159.203.133.16/wordcloud/"+word;
@@ -205,6 +242,23 @@
           .text(function(d) { return d.text; });
     }
     getWords("Microsoft");
+    $.get('http://159.203.133.16/sentiment/microsoft', function(data){
+        for(var i=0;i<data.length;i++){
+            average+=data[i];
+            if(data[i]>0&&data[i]<1){
+                count[0]+=1;
+            }
+            else if(data[i]==0){
+                count[1]+=1;
+            }
+            else{
+                count[2]+=1
+            }
+        }
+        average=average/parseFloat(data.length);
+        $('#score').html(average);
+        pieChart(count);
+    });
     </script>
 
 </body>
