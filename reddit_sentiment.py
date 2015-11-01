@@ -14,6 +14,7 @@ def index():
 
 
 @app.route("/<subreddit>/<thread>")
+@crossdomain(origin="*")
 def r(subreddit, thread):
     # establish client
     client = HODClient(
