@@ -77,7 +77,7 @@ def r(subreddit, thread):
             r = client.post('analyzesentiment', {'text': body})
             output = r.json()
             sentiment = output["aggregate"]["score"]
-            insertion_objects.append({"comment":body, "threadId":thread, "sentiment":sentiment, "adjectives":getAdjectives(comment)})
+            insertion_objects.append({"comment":body, "threadId":thread, "sentiment":sentiment, "adjectives":getAdjectives(body)})
             results.append(sentiment)
     collection.insert_many(insertion_objects)
 
