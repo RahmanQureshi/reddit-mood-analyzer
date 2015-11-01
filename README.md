@@ -1,5 +1,5 @@
 # Bamery
-A web-app that utilizes natural language processing and HP Haven's sentiment analysis to provide information for investment bankers and corporations about real-time public feeling institutions, organizations, corporations and more.
+A web-app that utilizes natural language processing and HP Haven's sentiment analysis to provide information for investment bankers and corporations about real-time public feeling towards institutions, organizations, corporations, governments and more.
 
 ## Reddit Thread Sentiment Analysis
 A extension that assesses a reddit thread's overall sentiment and gives a breakdown of the percentage of unhappy, neutral and happy comments via pie graph.
