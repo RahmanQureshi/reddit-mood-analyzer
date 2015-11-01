@@ -25,9 +25,16 @@
       }
       #banner {
         min-width:400px;
+        border-bottom: 1px solid white;
+      }
+      #loading-text {
+        text-align: center;
+      }
+      #main {
+        margin-top: 10px;
       }
     </style>
-    <script type="text/javascript" src="popup.js"></script>
+    <link rel="stylesheet" type="text/css" href="spinner.css">
   </head>
   <body>
     <div id="banner">
@@ -35,9 +42,24 @@
       <span id="title">Reddit Mood Analyzer</span>
     </div>
     <div id="main">
+      <div id="loading">
+        <div id="loading-text">Please wait while we analyze</div>
+        <section class="wrapper">
+          <div class="spinner">
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+          </div>
+        </section>
+      </div>
       <div class="data-group">
         <div class="score-box">
           The thread score is:
+          <span id="score"></span>
         </div>
         <div class="visual-box">
           Graph here!
@@ -45,5 +67,9 @@
       </div>
     </div>
   </body>
+
+  <script type="text/javascript" src="jquery-1.11.3.min.js"></script>
+  <script type="text/javascript" src="popup.js"></script>
+
 </html>
 
