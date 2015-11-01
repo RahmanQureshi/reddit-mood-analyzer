@@ -24,6 +24,14 @@ function request(subreddit,id){
     });
 }
 
+
+function getWords(word){
+    var url="http://159.203.133.16/wordcloud/"+word;
+    $.get(url,function(d){
+        wordCloud(d);
+    });
+}
+
 function pieChart(data){
     var HEIGHT=200;
     var WIDTH=200;
@@ -77,7 +85,7 @@ function get_domain_name(url)
     return [matches[1], matches[2]]
 }
 
-chrome.tabs.query({'active': true, 'lastFocusedWindow': true}, function (tabs) {
+/*chrome.tabs.query({'active': true, 'lastFocusedWindow': true}, function (tabs) {
     var url = tabs[0].url;
     domain_parts = get_domain_name(url);
     var failed = false;
@@ -96,6 +104,7 @@ chrome.tabs.query({'active': true, 'lastFocusedWindow': true}, function (tabs) {
         $('#error').show();
     }
 });
+*/
 
 var WIDTH=300;
 var HEIGHT=300;
