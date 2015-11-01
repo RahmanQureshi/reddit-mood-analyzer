@@ -35,7 +35,7 @@ h6 {
     padding-bottom: 50px;
     text-align: center;
     color: #f8f8f8;
-    background: url(../img/intro-bg.jpg) no-repeat center center;
+    background: url(../img/header-cover.jpg) no-repeat center center;
     background-size: cover;
 }
 
@@ -47,7 +47,6 @@ h6 {
 
 .intro-message > h1 {
     margin: 0;
-    text-shadow: 2px 2px 3px rgba(0,0,0,0.6);
     font-size: 5em;
 }
 
@@ -58,7 +57,7 @@ h6 {
 }
 
 .intro-message > h3 {
-    text-shadow: 2px 2px 3px rgba(0,0,0,0.6);
+    
 }
 
 @media(max-width:767px) {
@@ -94,7 +93,18 @@ h6 {
 
 .content-section-a {
     padding: 50px 0;
-    background-color: #f8f8f8;
+    background-color: rgba(166, 172, 175, 0.43);
+}
+
+.navbar-default .navbar-nav>li>a{
+    color: white;
+}
+
+.navbar-fixed-top {
+    height: 60px;
+    border-width: 0 0 0px;
+    font-size: 30px;
+    padding-top: 5px;
 }
 
 .content-section-b {
@@ -110,7 +120,7 @@ h6 {
 .section-heading-spacer {
     float: left;
     width: 200px;
-    border-top: 3px solid #e7e7e7;
+    border-top: 3px solid rgba(0, 0, 0, 0.65);
 }
 
 .banner {
