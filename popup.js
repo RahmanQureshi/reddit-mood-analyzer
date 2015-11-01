@@ -1,4 +1,6 @@
 function request(subreddit,id){
+    $('#data-group').hide();
+    $('#loading').show();
     var count=[0,0,0];
     var average=0;
     $.get('/'+subreddit+'/'+id,function(data,status){
@@ -22,11 +24,10 @@ function request(subreddit,id){
 }
 
 function pieChart(data){
-    $('#loading').hide();
-    var HEIGHT=300;
-    var WIDTH=300;
+    var HEIGHT=200;
+    var WIDTH=200;
     var radius=Math.min(HEIGHT,WIDTH)/2;
-    var color = ['#00ff00','#ffff00','#ff0000'];
+    var color = ['#00ff00','#FFBF00','#8B0000'];
     
     var svg = d3.select('.visual-box')
     .append('svg')
@@ -47,6 +48,36 @@ function pieChart(data){
     .append('path')
     .attr('d', arc)
     .attr('fill', function(d,i){return color[i]});
+    $('#loading').hide();
+    $('#data-group').show();
 }
 
-pieChart([1,2,3]);
+
+function get_domain_name(url)
+{ 
+    var matches = url.match(/:\/\/(?:www\.)?(.[^/]+)(.*)/);
+    if(matches.length<=1) {
+        return [];
+    }
+    return [matches[1], matches[2]]
+}
+
+chrome.tabs.query({'active': true, 'lastFocusedWindow': true}, function (tabs) {
+    var url = tabs[0].url;
+    domain_parts = get_domain_name(url);
+    var failed = false;
+    if (domain_parts.length <=1 || domain_parts[0]!='reddit.com')
+    {
+        failed = true;
+    }
+    path_parts = domain_parts[1].split('/');
+    if (path_parts[3] != 'comments')
+    {
+        failed = true;
+    }
+    if ( !failed ) {
+        request(path_parts[2], path_parts[4]);
+    } else {
+        $('#error').show();
+    }
+});
