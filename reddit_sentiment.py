@@ -31,9 +31,20 @@ def wordListToFrequencyTuple(word_list):
     frequencyMap = nltk.FreqDist(word_list)
     return [[key, value] for key, value in frequencyMap.items()]
 
+# http://stackoverflow.com/questions/30232081/mongoexception-index-with-name-code-already-exists-with-different-options
 def searchKeyword(keywords):
-    cursor = collection.find({'$text': { '$search': keywords}})
-    return [c for c in cursor]
+    keywords = keywords.lower()
+    cursor = collection.find()
+    relevant = []
+    for c in cursor:
+        try:
+            if c['comment'].lower().find(keywords) != -1:
+                relevant.append(c)
+        except:
+            pass
+    return relevant
+    #cursor = collection.find({'$text': { '$search': keywords}})
+    #return [c for c in cursor]
 
 def searchThreadId(threadId):
     cursor = collection.find({'threadId':threadId})
@@ -42,15 +53,24 @@ def searchThreadId(threadId):
 def store(comment, threadId, sentiment):
     collection.insert({"comment":comment, "threadId":threadId, "sentiment":sentiment, "adjectives":getAdjectives(comment)})
 
+@app.route('/sentiment/<keyword>')
+def getSentimentTowardsWord(keyword):
+    relatedObjects = searchKeyword(keyword)
+    sentiments = []
+    for obj in relatedObjects:
+        try:
+            sentiments.append(obj['sentiment'])
+        except:
+            pass
+    return Response(json.dumps(sentiments), mimetype="application/json")
+
 @app.route("/")
 def index():
     return render_template("index.html")
 
 @app.route('/wordcloud/<keyword>')
 def wordCloud(keyword):
-    print("HERE")
     relatedObjects = searchKeyword(keyword)
-    print(relatedObjects)
     adjectives = []
     for obj in relatedObjects:
         try:
