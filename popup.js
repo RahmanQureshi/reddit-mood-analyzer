@@ -29,6 +29,7 @@ function pieChart(data){
     var WIDTH=200;
     var radius=Math.min(HEIGHT,WIDTH)/2;
     var color = ['#00ff00','#FFBF00','#8B0000'];
+    var percentageFormat = d3.format("%");
     
     var svg = d3.select('.visual-box')
     .append('svg')
@@ -37,22 +38,35 @@ function pieChart(data){
     .append('g')
     .attr('transform', 'translate('+(WIDTH/2)+','+(HEIGHT/2)+')'); 
     
-    var arc = d3.svg.arc().outerRadius(radius);
+    var arc = d3.svg.arc().outerRadius(radius).innerRadius(0);
     
     var pie = d3.layout.pie()
-    .value(function(d){return d})
-    .sort(null);
+                .value(function(d){return d})
+                .sort(null);
     
-    var path = svg.selectAll('path')
-    .data(pie(data))
-    .enter()
-    .append('path')
-    .attr('d', arc)
-    .attr('fill', function(d,i){return color[i]});
+    var g = svg.selectAll('.arc')
+               .data(pie(data))
+               .enter().append("g")
+               .attr("class", "arc");
+    
+    g.append("path")
+                .attr("d", arc)
+                .style("fill", function(d,i) {
+                    return color[i];
+                });
+    
+    var total = d3.sum(data, function(d){ 
+            	return d;
+    });
+    console.log(total);
+
+    g.append('text').attr("transform",function(d,i){return "translate("+arc.centroid(d,i)+")"})
+                    .attr("text-anchor", "middle")
+                    .text(function(d){return percentageFormat(d.value/total)});
+    
     $('#loading').hide();
     $('#data-group').show();
 }
-
 
 function get_domain_name(url)
 { 
