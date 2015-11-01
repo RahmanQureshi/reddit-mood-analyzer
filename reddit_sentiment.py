@@ -3,6 +3,7 @@ from flask import jsonify, render_template, Response
 from havenondemand.hodindex import HODClient
 import praw
 import json
+from domain_fix import crossdomain
 
 
 app = Flask(__name__)
