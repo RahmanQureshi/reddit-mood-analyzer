@@ -2,6 +2,7 @@ from flask import Flask
 from flask import jsonify
 from flask import render_template
 from havenondemand.hodindex import HODClient
+from flask import request
 
 
 app = Flask(__name__)
@@ -11,6 +12,10 @@ app = Flask(__name__)
 def index():
     return render_template("index.html")
 
+@app.route("/report.html")
+def report():
+    topic = request.args.get('topic')
+    return topic
 
 @app.route("/r/<subreddit>/<thread>")
 def r(subreddit, thread):	

@@ -18,6 +18,7 @@ function request(subreddit,id){
                 }
             }
             average=average/parseFloat(data.length);
+            $('#score').html(average);
             pieChart(count);
         }
     });
