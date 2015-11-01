@@ -1,9 +1,8 @@
 from flask import Flask
-from flask import jsonify
-from flask import render_template
-from flask import Response
+from flask import jsonify, render_template, Response
 from havenondemand.hodindex import HODClient
 import praw
+import json
 
 
 app = Flask(__name__)
