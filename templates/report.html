@@ -8,17 +8,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
+    <script src="../d3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/1.6.19/topojson.min.js"></script>
+
+    <script src="../datamaps.world.min.js"></script>
 
     <title>Landing Page - Start Bootstrap Theme</title>
 
     <!-- Bootstrap Core CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="../static/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom CSS -->
-    <link href="css/landing-page.css" rel="stylesheet">
+    <link href="../static/css/landing-page.css" rel="stylesheet">
 
     <!-- Custom Fonts -->
-    <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="../static/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link href="http://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -76,8 +80,8 @@
                     <h2 class="section-heading">Monthly Subscriber's Report: Microsoft</h2>
                     <p class="lead"></p>
                 </div>
-                <div class="col-lg-5 col-lg-offset-2 col-sm-6">
-                    <img class="img-responsive" src="img/ipad.png" alt="">
+                <div id="map" class="col-lg-5 col-lg-offset-1 col-sm-6">
+                    
                 </div>
             </div>
 
@@ -118,12 +122,31 @@
     </footer>
 
     <!-- jQuery -->
-    <script src="js/jquery.js"></script>
+    <script src="../static/js/jquery.js"></script>
 
     <!-- Bootstrap Core JavaScript -->
-    <script src="js/bootstrap.min.js"></script>
+    <script src="../static/js/bootstrap.min.js"></script>
 
     <script type="text/javascript">
+        var colors = d3.scale.ordinal()
+                      .range(['#99E699', '#5CD65C', '#2EB82E', '#1F7A1F', '#145214']);
+        var map = new Datamap({
+            height: 350,
+            width: 500,
+            element: document.getElementById('map')});
+        
+    map.updateChoropleth({
+        USA: colors(Math.random() * 10),
+        PRK: colors(Math.random() * 10),
+        RUS: colors(Math.random() * 10),
+        BRA: colors(Math.random() * 10),
+        CAN: colors(Math.random() * 10),
+        ZAF: colors(Math.random() * 30),
+        IND: colors(Math.random() * 10),
+        DEU: colors(Math.random() * 30),
+        PAK: colors(Math.random() * 50),
+        SSD: colors(Math.random() * 30)
+      });
 
     </script>
 
