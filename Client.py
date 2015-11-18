@@ -1,5 +1,5 @@
-class MongoDBClient:
-    
+class MongoDBClient(object):
+
     def __init__(self):
         import pymongo
         import os
@@ -12,6 +12,6 @@ class MongoDBClient:
         data = re.search(pattern, mongolab_uri).groupdict()
         client = pymongo.MongoClient(mongolab_uri)
         self.db = client.get_database(data['database'])
-    
+
     def get_db(self):
         return self.db

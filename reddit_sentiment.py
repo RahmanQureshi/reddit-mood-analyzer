@@ -1,13 +1,11 @@
 from flask import Flask
-from flask import jsonify, render_template, Response
+from flask import render_template, Response
 from havenondemand.hodindex import HODClient
 from flask import request
-from pymongo import MongoClient
 import praw
 import json
 from domain_fix import crossdomain
 from Client import MongoDBClient
-import datetime
 import nltk
 
 app = Flask(__name__)
@@ -16,23 +14,25 @@ collection = MongoDBClient().get_db().redditComments
 
 try:
     collection.ensure_index([('comment', 'text')])
-except:
+except Exception:
     pass
 
-def getAdjectives(body):
+
+def get_adjectives(body):
     poss = nltk.pos_tag(nltk.word_tokenize(body))
-    adjectives = []    
+    adjectives = []
     for pos in poss:
         if pos[1] in ["JJ", "NN", "WP"]:
             adjectives.append(pos[0])
     return [adjective.lower() for adjective in adjectives]
 
-def wordListToFrequencyTuple(word_list):
-    frequencyMap = nltk.FreqDist(word_list)
-    return [[key, value] for key, value in frequencyMap.items()]
 
-# http://stackoverflow.com/questions/30232081/mongoexception-index-with-name-code-already-exists-with-different-options
-def searchKeyword(keywords):
+def word_list_frequency_tuple(word_list):
+    frequency_map = nltk.FreqDist(word_list)
+    return [[key, value] for key, value in frequency_map.items()]
+
+
+def search_keyword(keywords):
     keywords = keywords.lower()
     cursor = collection.find()
     relevant = []
@@ -40,54 +40,63 @@ def searchKeyword(keywords):
         try:
             if c['comment'].lower().find(keywords) != -1:
                 relevant.append(c)
-        except:
+        except Exception:
             pass
     return relevant
-    #cursor = collection.find({'$text': { '$search': keywords}})
-    #return [c for c in cursor]
+    # cursor = collection.find({'$text': { '$search': keywords}})
+    # return [c for c in cursor]
 
-def searchThreadId(threadId):
-    cursor = collection.find({'threadId':threadId})
+
+def search_thread_id(thread_id):
+    cursor = collection.find({'thread_id': thread_id})
     return [c["sentiment"] for c in cursor]
-    
-def store(comment, threadId, sentiment):
-    collection.insert({"comment":comment, "threadId":threadId, "sentiment":sentiment, "adjectives":getAdjectives(comment)})
+
+
+def store(comment, thread_id, sentiment):
+    collection.insert({"comment": comment, "thread_id": thread_id,
+                       "sentiment": sentiment,
+                       "adjectives": get_adjectives(comment)})
+
 
 @app.route('/sentiment/<keyword>')
-def getSentimentTowardsWord(keyword):
-    relatedObjects = searchKeyword(keyword)
+def get_sentiment_towards_word(keyword):
+    related_objects = search_keyword(keyword)
     sentiments = []
-    for obj in relatedObjects:
+    for obj in related_objects:
         try:
             sentiments.append(obj['sentiment'])
-        except:
+        except Exception:
             pass
     return Response(json.dumps(sentiments), mimetype="application/json")
+
 
 @app.route("/")
 def index():
     return render_template("index.html")
 
-@app.route('/wordcloud/<keyword>')
-def wordCloud(keyword):
-    relatedObjects = searchKeyword(keyword)
+
+@app.route('/word_cloud/<keyword>')
+def word_cloud(keyword):
+    related_objects = search_keyword(keyword)
     adjectives = []
-    for obj in relatedObjects:
+    for obj in related_objects:
         try:
-            adjectives.extend(obj['adjectives']) # not all will have adjectives
-        except:
+            # not all will have adjectives
+            adjectives.extend(obj['adjectives'])
+        except Exception:
             pass
-    returned_values = wordListToFrequencyTuple(adjectives)
+    returned_values = word_list_frequency_tuple(adjectives)
     returned_values.sort(key=lambda x: x[1])
-    for x in range(len(returned_values)):
-        returned_values[x][1] *= 10
-    return Response(json.dumps(returned_values[-1:-11:-1]), mimetype="application/json")
+    for value_list in returned_values:
+        value_list[1] *= 10
+    return Response(json.dumps(returned_values[-1:-11:-1]),
+                    mimetype="application/json")
 
 
 @app.route("/report.html")
 @app.route("/report/<topic>")
 def report(topic=None):
-    if topic is None:        
+    if topic is None:
         topic = request.args.get('topic')
     return render_template("report.html", topic=topic)
 
@@ -96,11 +105,11 @@ def report(topic=None):
 @crossdomain(origin="*")
 def r(subreddit, thread):
 
-
     # if db has stored values, return stored values
-    stored_sentiments = searchThreadId(thread)
+    stored_sentiments = search_thread_id(thread)
     if stored_sentiments != []:
-        return Response(json.dumps(stored_sentiments), mimetype="application/json")
+        return Response(json.dumps(stored_sentiments),
+                        mimetype="application/json")
 
     # establish client
     client = HODClient(
@@ -110,7 +119,8 @@ def r(subreddit, thread):
     user_agent = "reddit-mood-analyzer-scrape by /u/abrarisland"
     reddit = praw.Reddit(user_agent=user_agent)
 
-    submission = reddit.get_submission(submission_id=thread, comment_limit=15)
+    submission = reddit.get_submission(
+        submission_id=thread, comment_limit=15)
 
     # get all of the comments in the thread and flatten the comment tree
     flat_comments = praw.helpers.flatten_tree(submission.comments)
@@ -126,7 +136,9 @@ def r(subreddit, thread):
             r = client.post('analyzesentiment', {'text': body})
             output = r.json()
             sentiment = output["aggregate"]["score"]
-            insertion_objects.append({"comment":body, "threadId":thread, "sentiment":sentiment, "adjectives":getAdjectives(body)})
+            insertion_objects.append(
+                {"comment": body, "thread_id": thread,
+                 "sentiment": sentiment, "adjectives": get_adjectives(body)})
             results.append(sentiment)
     collection.insert_many(insertion_objects)
 
