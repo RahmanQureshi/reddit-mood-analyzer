@@ -1,4 +1,6 @@
 class MongoDBClient(object):
+    """ Used to set config information about the database and store
+    private collection information. """
 
     def __init__(self):
         import pymongo
